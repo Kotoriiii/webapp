@@ -13,7 +13,7 @@ class UserController {
       const wrapperData = { ...data, password: hash };
       const result = await userService.createUser(wrapperData);
       const { password, ...rest } = result;
-      res.statusCode = 200;
+      res.statusCode = 201;
       res.statusMessage = 'User Created';
       sendResponse(res, data, 'create user success');
     } catch (err) {
