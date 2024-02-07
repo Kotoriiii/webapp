@@ -9,13 +9,19 @@ export const createUserMiddleware = async (req: Request, res: Response, next: Ne
 
   if (id || account_created || account_updated) {
     res.statusCode = 400;
-    sendResponse(res, null, 'incorrect body parameters');
+    sendResponse(res, null, 'body should not include id or account_created or account_updated');
     return;
   }
 
   if (!username || !password || !first_name || !last_name) {
     res.statusCode = 400;
-    sendResponse(res, null, 'incorrect body parameters');
+    sendResponse(res, null, 'body must include username and password and first_name and last_name');
+    return;
+  }
+
+  if(username.indexOf('@') === -1){
+    res.statusCode = 400;
+    sendResponse(res, null, 'username must be a valid email address');
     return;
   }
 

@@ -14,14 +14,6 @@ jest.mock('../src/db', () => ({
   default: mockDeep<PrismaClient>()
 }));
 
-beforeAll(() => {
-  prismaMock.$connect();
-});
-
-beforeAll(() => {
-  prismaMock.$disconnect();
-});
-
 beforeEach(() => {
   mockReset(prismaMock);
   createPrismaMock<PrismaClient>(
@@ -94,6 +86,17 @@ describe('api integration test', () => {
         account_updated: null
       });
     });
+
+    it('should return status 400', async () => {
+      const res = await request
+        .get('/api/v1/user')
+        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
+        .send({
+          test: 'test'
+        });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.msg).toEqual('cannot have body');
+    });
   });
 
   describe('post api/v1/user', () => {
@@ -120,6 +123,9 @@ describe('api integration test', () => {
         password: 'skdjfhskdfjhg'
       });
       expect(res.statusCode).toBe(400);
+      expect(res.body.msg).toEqual(
+        'body must include username and password and first_name and last_name'
+      );
     });
 
     it('should return status 400', async () => {
@@ -127,6 +133,9 @@ describe('api integration test', () => {
         id: '1'
       });
       expect(res.statusCode).toBe(400);
+      expect(res.body.msg).toEqual(
+        'body should not include id or account_created or account_updated'
+      );
     });
 
     it('should return status 400', async () => {
@@ -134,6 +143,20 @@ describe('api integration test', () => {
         test: 'test'
       });
       expect(res.statusCode).toBe(400);
+      expect(res.body.msg).toEqual(
+        'body must include username and password and first_name and last_name'
+      );
+    });
+
+    it('should return status 400', async () => {
+      const res = await request.post('/api/v1/user').send({
+        first_name: 'test',
+        last_name: 'test',
+        password: 'skdjfhskdfjhg',
+        username: 'test'
+      });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.msg).toEqual('username must be a valid email address');
     });
   });
 
