@@ -15,7 +15,7 @@ class UserController {
       const { password, ...rest } = result;
       res.statusCode = 201;
       res.statusMessage = 'User Created';
-      sendResponse(res, data, 'create user success');
+      sendResponse(res, rest, 'create user success');
     } catch (err) {
       res.statusCode = 503;
       sendResponse(res, err);
@@ -24,8 +24,12 @@ class UserController {
 
   async updateUser(req: Request, res: Response) {
     const { id } = (req as IRequest).userInfo;
-    const data = req.body as userUpdatePayloads;
     try {
+      let data = req.body as userUpdatePayloads;
+      if(data.password){
+        const hash = await hashedPassword(data.password);
+        data = { ...data, password: hash };
+      }
       await userService.updateUser(data, id);
       res.sendStatus(204);
     } catch (err) {
