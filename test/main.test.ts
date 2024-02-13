@@ -66,15 +66,15 @@ describe('api integration test', () => {
     });
   });
 
-  describe('get api/v1/user', () => {
+  describe('get api/v1/user/self', () => {
     it('should return status 401', async () => {
-      const res = await request.get('/api/v1/user').auth('sasd', 'asdsa', { type: 'basic' });
+      const res = await request.get('/api/v1/user/self').auth('sasd', 'asdsa', { type: 'basic' });
       expect(res.statusCode).toBe(401);
     });
 
     it('should return status 200', async () => {
       const res = await request
-        .get('/api/v1/user')
+        .get('/api/v1/user/self')
         .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' });
       expect(res.statusCode).toBe(200);
       expect(res.body.data).toEqual({
@@ -89,7 +89,7 @@ describe('api integration test', () => {
 
     it('should return status 400', async () => {
       const res = await request
-        .get('/api/v1/user')
+        .get('/api/v1/user/self')
         .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
         .send({
           test: 'test'
@@ -108,12 +108,7 @@ describe('api integration test', () => {
         username: 'test@example.com'
       });
       expect(res.statusCode).toBe(201);
-      expect(res.body.data).toEqual({
-        first_name: 'test',
-        last_name: 'test',
-        password: 'skdjfhskdfjhg',
-        username: 'test@example.com'
-      });
+      expect(res.body.data["password"]).toBeUndefined();
     });
 
     it('should return status 400', async () => {
@@ -198,6 +193,20 @@ describe('api integration test', () => {
           username: 'jason'
         });
       expect(res.statusCode).toBe(400);
+    });
+
+    it('should return status 200', async () => {
+      const res1 = await request
+        .put('/api/v1/user')
+        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
+        .send({
+          password: 'test'
+        });
+      const res2 = await request
+        .get('/api/v1/user/self')
+        .auth('jane.doe@example.com', 'test', { type: 'basic' });
+      expect(res1.statusCode).toBe(204);
+      expect(res2.statusCode).toBe(200);
     });
   });
 });

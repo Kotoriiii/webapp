@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "webpack --watch --env mode=development --config webpack.config.ts",
+    "prisma-migrate": "prisma migrate dev --name init",
     "clean:dev": "rimraf build",
     "clean:prod": "rimraf dist",
     "build": "webpack --mode production --config webpack.config.ts",
