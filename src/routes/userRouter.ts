@@ -12,6 +12,6 @@ const router = express.Router();
 
 router.post('/', createUserMiddleware, userController.createUsers);
 router.put('/', basicAuthMiddleware, updateUserMiddleware, userController.updateUser);
-router.get('/', basicAuthMiddleware, getUserMiddleware, userController.getUsers);
+router.get('/self', basicAuthMiddleware, getUserMiddleware, userController.getUsers);
 
 export default add405ResponseToRouter(router);
