@@ -11,6 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env: 
+        DATABASE_URL: mysql://root:test@localhost:3306/Test_DB
+        
     steps:
       - name: CheckOut
         uses: actions/checkout@v4
@@ -35,8 +38,6 @@ jobs:
 
       - name: Migrate Database
         run: npm run prisma-migrate
-        env: 
-          DATABASE_URL: mysql://root:test@localhost:3306/Test_DB
-
+        
       - name: Run testing
         run: npm run test
