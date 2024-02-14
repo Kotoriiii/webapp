@@ -6,6 +6,10 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 router.get('/', async (req, res) => {
+  if (Object.keys(req.params).length !== 0) {
+    res.status(400).send();
+  }
+
   if (Object.keys(req.body).length !== 0) {
     res.status(400).send();
   }
