@@ -1,62 +1,62 @@
-import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
+// import { mockDeep, mockReset, DeepMockProxy } from 'jest-mock-extended';
 import app from '../src/app';
 import supertest from 'supertest';
-import prisma from '../src/db';
-import createPrismaMock from 'prisma-mock';
-import { Prisma, PrismaClient } from '@prisma/client';
+// import prisma from '../src/db';
+// import createPrismaMock from 'prisma-mock';
+// import { Prisma, PrismaClient } from '@prisma/client';
 
 const request = supertest(app);
-const prismaMock = prisma as DeepMockProxy<PrismaClient>;
+// const prismaMock = prisma as DeepMockProxy<PrismaClient>;
 
-jest.mock('../src/db', () => ({
-  __esModule: true,
-  ...jest.requireActual('../src/db'),
-  default: mockDeep<PrismaClient>()
-}));
+// jest.mock('../src/db', () => ({
+//   __esModule: true,
+//   ...jest.requireActual('../src/db'),
+//   default: mockDeep<PrismaClient>()
+// }));
 
-beforeEach(() => {
-  mockReset(prismaMock);
-  createPrismaMock<PrismaClient>(
-    {
-      user: [
-        {
-          id: '71ca60ea-cd6c-4632-a2e6-3095b6aaedc8',
-          first_name: 'Jason',
-          last_name: 'Li',
-          username: 'jane.doe@example.com',
-          password: '$2a$10$pcDUXf3nNPwmuDtk4BOreufOUjhevPvqqFSu1voekft8Ho7W2Wqwu',
-          account_created: null,
-          account_updated: null
-        }
-      ]
-    },
-    Prisma.dmmf.datamodel,
-    prismaMock as any
-  );
-});
+// beforeEach(() => {
+//   mockReset(prismaMock);
+//   createPrismaMock<PrismaClient>(
+//     {
+//       user: [
+//         {
+//           id: '71ca60ea-cd6c-4632-a2e6-3095b6aaedc8',
+//           first_name: 'Jason',
+//           last_name: 'Li',
+//           username: 'jane.doe@example.com',
+//           password: '$2a$10$pcDUXf3nNPwmuDtk4BOreufOUjhevPvqqFSu1voekft8Ho7W2Wqwu',
+//           account_created: null,
+//           account_updated: null
+//         }
+//       ]
+//     },
+//     Prisma.dmmf.datamodel,
+//     prismaMock as any
+//   );
+// });
 
 describe('api integration test', () => {
-  // describe('get api/v1/healthz', () => {
-  //   it('should return status 200', async () => {
-  //     const res = await request.get('/api/v1/healthz');
-  //     expect(res.statusCode).toBe(200);
-  //     expect(res.body).toEqual({});
-  //   });
+  describe('get api/v1/healthz', () => {
+    it('should return status 200', async () => {
+      const res = await request.get('/api/v1/healthz');
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toEqual({});
+    });
 
-  //   it('should return status 400', async () => {
-  //     const res = await request.get('/api/v1/healthz').send({
-  //       test: 'test'
-  //     });
-  //     expect(res.statusCode).toBe(400);
-  //     expect(res.body).toEqual({});
-  //   });
+    it('should return status 400', async () => {
+      const res = await request.get('/api/v1/healthz').send({
+        test: 'test'
+      });
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toEqual({});
+    });
 
-  //   it('should return status 405', async () => {
-  //     const res = await request.post('/api/v1/healthz');
-  //     expect(res.statusCode).toBe(405);
-  //     expect(res.body).toEqual({});
-  //   });
-  // });
+    it('should return status 405', async () => {
+      const res = await request.post('/api/v1/healthz');
+      expect(res.statusCode).toBe(405);
+      expect(res.body).toEqual({});
+    });
+  });
 
   describe('get api/v1/404', () => {
     it('should return status 404', async () => {
