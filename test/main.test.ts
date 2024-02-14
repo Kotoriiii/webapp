@@ -190,7 +190,7 @@ describe('api integration test', () => {
         .send({
           username: 'jason'
         });
-      expect(res.statusCode).toBe(400);
+      expect(res.statusCode).toBe(401);
     });
 
     it('should return status 200', async () => {
