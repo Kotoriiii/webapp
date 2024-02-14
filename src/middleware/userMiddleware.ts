@@ -3,6 +3,18 @@ import userService from 'src/service/user/userService';
 import { sendResponse } from 'src/utils/sendResponse';
 import { User } from '@prisma/client';
 
+const user: User = {
+  id: '',
+  first_name: '',
+  last_name: '',
+  password: '',
+  username: '',
+  account_created: null,
+  account_updated: null
+};
+
+const payloadKeys = Object.keys(user);
+
 export const createUserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const { username, password, first_name, last_name, id, account_created, account_updated } =
     req.body as User;
@@ -19,7 +31,7 @@ export const createUserMiddleware = async (req: Request, res: Response, next: Ne
     return;
   }
 
-  if(username.indexOf('@') === -1){
+  if (username.indexOf('@') === -1) {
     res.statusCode = 400;
     sendResponse(res, null, 'username must be a valid email address');
     return;
@@ -42,12 +54,20 @@ export const createUserMiddleware = async (req: Request, res: Response, next: Ne
 };
 
 export const updateUserMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  const flag = Object.keys(req.body).some(key => payloadKeys.indexOf(key) === -1);
+
+  if (flag) {
+    res.statusCode = 400;
+    sendResponse(res, null, 'invalid body parameter');
+    return;
+  }
+
   const { username, id, account_created, account_updated, password, first_name, last_name } =
     req.body as User;
 
   if (id || account_created || account_updated || username) {
     res.statusCode = 400;
-    sendResponse(res, null, 'body cannot include id, account_created, account_updated ');
+    sendResponse(res, null, 'body cannot include id, account_created, account_updated');
     return;
   }
 
