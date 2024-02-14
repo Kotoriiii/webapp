@@ -66,56 +66,23 @@ describe('api integration test', () => {
     });
   });
 
-  describe('get api/v1/user/self', () => {
-    it('should return status 401', async () => {
-      const res = await request.get('/api/v1/user/self').auth('sasd', 'asdsa', { type: 'basic' });
-      expect(res.statusCode).toBe(401);
-    });
-
-    it('should return status 200', async () => {
-      const res = await request
-        .get('/api/v1/user/self')
-        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' });
-      expect(res.statusCode).toBe(200);
-      expect(res.body.data).toEqual({
-        id: '71ca60ea-cd6c-4632-a2e6-3095b6aaedc8',
-        first_name: 'Jason',
-        last_name: 'Li',
-        username: 'jane.doe@example.com',
-        account_created: null,
-        account_updated: null
-      });
-    });
-
-    it('should return status 400', async () => {
-      const res = await request
-        .get('/api/v1/user/self')
-        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
-        .send({
-          test: 'test'
-        });
-      expect(res.statusCode).toBe(400);
-      expect(res.body.msg).toEqual('cannot have body');
-    });
-  });
-
   describe('post api/v1/user', () => {
     it('should return status 201', async () => {
       const res = await request.post('/api/v1/user').send({
         first_name: 'test',
         last_name: 'test',
-        password: 'skdjfhskdfjhg',
+        password: 'test',
         username: 'test@example.com'
       });
       expect(res.statusCode).toBe(201);
-      expect(res.body.data["password"]).toBeUndefined();
+      expect(res.body.data['password']).toBeUndefined();
     });
 
     it('should return status 400', async () => {
       const res = await request.post('/api/v1/user').send({
         first_name: 'test',
         last_name: 'test',
-        password: 'skdjfhskdfjhg'
+        password: 'test'
       });
       expect(res.statusCode).toBe(400);
       expect(res.body.msg).toEqual(
@@ -147,7 +114,7 @@ describe('api integration test', () => {
       const res = await request.post('/api/v1/user').send({
         first_name: 'test',
         last_name: 'test',
-        password: 'skdjfhskdfjhg',
+        password: 'test',
         username: 'test'
       });
       expect(res.statusCode).toBe(400);
@@ -155,11 +122,42 @@ describe('api integration test', () => {
     });
   });
 
+  describe('get api/v1/user/self', () => {
+    it('should return status 401', async () => {
+      const res = await request.get('/api/v1/user/self').auth('sasd', 'asdsa', { type: 'basic' });
+      expect(res.statusCode).toBe(401);
+    });
+
+    it('should return status 200', async () => {
+      const res = await request
+        .get('/api/v1/user/self')
+        .auth('test@example.com', 'test', { type: 'basic' });
+      expect(res.statusCode).toBe(200);
+      const { id, account_created, account_updated, ...rest } = res.body.data;
+      expect(rest).toEqual({
+        first_name: 'test',
+        last_name: 'test',
+        username: 'test@example.com'
+      });
+    });
+
+    it('should return status 400', async () => {
+      const res = await request
+        .get('/api/v1/user/self')
+        .auth('test@example.com', 'test', { type: 'basic' })
+        .send({
+          test: 'test'
+        });
+      expect(res.statusCode).toBe(400);
+      expect(res.body.msg).toEqual('cannot have body');
+    });
+  });
+
   describe('put api/v1/user', () => {
     it('should return status 204', async () => {
       const res = await request
         .put('/api/v1/user')
-        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
+        .auth('test@example.com', 'test', { type: 'basic' })
         .send({
           first_name: 'Jason',
           last_name: 'Li'
@@ -168,7 +166,7 @@ describe('api integration test', () => {
     });
 
     it('should return status 401', async () => {
-      const res = await request.put('/api/v1/user').auth('test', 'test', { type: 'basic' }).send({
+      const res = await request.put('/api/v1/user').auth('asds', 'asdasd', { type: 'basic' }).send({
         first_name: 'Jason',
         last_name: 'Li'
       });
@@ -178,7 +176,7 @@ describe('api integration test', () => {
     it('should return status 400', async () => {
       const res = await request
         .put('/api/v1/user')
-        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
+        .auth('test@example.com', 'test', { type: 'basic' })
         .send({
           test: 'test'
         });
@@ -188,7 +186,7 @@ describe('api integration test', () => {
     it('should return status 400', async () => {
       const res = await request
         .put('/api/v1/user')
-        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
+        .auth('test@example.com', 'test', { type: 'basic' })
         .send({
           username: 'jason'
         });
@@ -198,13 +196,13 @@ describe('api integration test', () => {
     it('should return status 200', async () => {
       const res1 = await request
         .put('/api/v1/user')
-        .auth('jane.doe@example.com', 'skdjfhskdfjhg', { type: 'basic' })
+        .auth('test@example.com', 'test', { type: 'basic' })
         .send({
-          password: 'test'
+          password: '123'
         });
       const res2 = await request
         .get('/api/v1/user/self')
-        .auth('jane.doe@example.com', 'test', { type: 'basic' });
+        .auth('test@example.com', '123', { type: 'basic' });
       expect(res1.statusCode).toBe(204);
       expect(res2.statusCode).toBe(200);
     });
