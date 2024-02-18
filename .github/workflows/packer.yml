@@ -19,13 +19,20 @@ jobs:
         uses: hashicorp/setup-packer@main
         with:
           version: "latest"
+
+      - name: "Run Packer init"
+        run: "packer init packer/version.pkr.hcl"
     
       - name: "Run Packer fmt"
         run: |
-            if packer fmt --check packer/.; then
+            if ! packer fmt --check packer/.; then
             echo "Packer fmt found formatting issues. Please run 'packer fmt' locally and commit the changes."
             exit 1
             fi
     
       - name: "Run Packer validate"
-        run: "packer validate packer/."
+        run: |
+          if ! packer validate packer/.; then
+          echo "Packer validation failed. Please fix the issues and try again."
+          exit 1
+          fi
