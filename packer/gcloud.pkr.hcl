@@ -3,7 +3,8 @@ source "googlecompute" "centos8Image" {
   source_image_family = "centos-stream-8"
   zone                = "us-east4-c"
   ssh_username        = "packer"
-  image_name          = "packer-centos-stream-8-{{timestamp}}"
+  image_name          = "webapp-image"
+  machine_type        = "e2-standard-8"
   image_family        = "packer-centos-stream-8"
 }
 
@@ -52,7 +53,7 @@ build {
     inline = [
       "sudo mkdir /opt/app",
       "sudo unzip -o /tmp/temp.zip -d /opt/app",
-      "sudo bash -c 'echo \"DATABASE_URL='mysql://root:Jason12345@3.12.120.137:3306/CSYE6225'\" > /opt/app/.env'",
+      "sudo bash -c 'echo \"DATABASE_URL='mysql://root@127.0.0.1:3306/CSYE6225'\" > /opt/app/.env'",
       "sudo pnpm install --prefix /opt/app",
       "sudo pnpm run -C /opt/app build",
       "sudo chown -R csye6225:csye6225 /opt/app",
