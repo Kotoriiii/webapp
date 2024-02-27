@@ -43,7 +43,7 @@ const getConfig = (
     plugins: [
       new WebpackShellPlugin({
         onBuildStart: {
-          scripts: ['npm run prisma-migrate && npm run clean:dev && npm run clean:prod'],
+          scripts: ['npm run clean:dev && npm run clean:prod'],
           blocking: true,
           parallel: false
         },
