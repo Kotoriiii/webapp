@@ -25,9 +25,6 @@ build {
       // Instal mysql and unzip
       "sudo dnf update -y",
       "sudo dnf install unzip -y",
-      "sudo dnf install mysql-server -y",
-      "sudo systemctl start mysqld",
-      "sudo systemctl enable mysqld",
       // Install node v20
       "curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -",
       "sudo dnf install nodejs -y",
@@ -53,13 +50,11 @@ build {
     inline = [
       "sudo mkdir /opt/app",
       "sudo unzip -o /tmp/temp.zip -d /opt/app",
-      "sudo bash -c 'echo \"DATABASE_URL='mysql://root@127.0.0.1:3306/CSYE6225'\" > /opt/app/.env'",
       "sudo pnpm install --prefix /opt/app",
       "sudo pnpm run -C /opt/app build",
       "sudo chown -R csye6225:csye6225 /opt/app",
       "sudo mv /tmp/nodeapp.service /etc/systemd/system/",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable nodeapp.service"
+      "sudo systemctl daemon-reload"
     ]
   }
 }
