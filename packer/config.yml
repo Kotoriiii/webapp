@@ -3,12 +3,12 @@ logging:
     my-app-receiver:
       type: files
       include_paths:
-        - /tmp/myapp.log
+        - /opt/app/logs/access.log
       record_log_file_path: true
   processors:
     my-app-processor:
       type: parse_json
-      time_key: time
+      time_key: date
       time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
   service:
     pipelines:
