@@ -8,7 +8,7 @@ logging:
   processors:
     set-timestamp:
       type: parse_json
-      time_key: date
+      time_key: timestamp
       time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
     move_severity:
       type: modify_fields
