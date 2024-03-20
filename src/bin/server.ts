@@ -86,7 +86,7 @@ function onListening() {
   logStream.write(
     JSON.stringify({
       message: `app appListening on ${bind}`,
-      timestamp: formatUTCWithMs(new Date()),
+      timestamp: Date.now(),
       severity: 'INFO'
     }) + '\n'
   );
