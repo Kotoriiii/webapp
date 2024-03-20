@@ -5,9 +5,9 @@
  */
 
 import app from '../app';
-import debug from 'debug';
-//const debug = require('debug')('ts-express:server');
 import http from 'http';
+import { logStream } from '../app';
+import formatUTCWithMs from 'src/utils/formateTime';
 
 /**
  * Get port from environment and store in Express.
@@ -83,5 +83,11 @@ function onError(error: any) {
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr!.port;
-  debug('Listening on ' + bind);
+  logStream.write(
+    JSON.stringify({
+      message: `app appListening on ${bind}`,
+      timestamp: formatUTCWithMs(new Date()),
+      severity: 'INFO'
+    }) + '\n'
+  );
 }
