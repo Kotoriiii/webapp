@@ -21,13 +21,13 @@ function formatUTCWithMs(date: Date) {
     parse(date.getUTCMonth() + 1) +
     '-' +
     parse(date.getUTCDate()) +
-    ' ' +
+    'T' +
     parse(date.getUTCHours()) +
     ':' +
     parse(date.getUTCMinutes()) +
     ':' +
     parse(date.getUTCSeconds()) +
-    ' .' +
+    '.' +
     parseMs(date.getUTCMilliseconds()) +
     'Z'
   );
