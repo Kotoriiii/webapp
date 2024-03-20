@@ -29,7 +29,7 @@ logger.token('json', (req: IReq, res) =>
   })
 );
 
-const logStream = fs.createWriteStream(path.join(__dirname, '../log/access.log'), { flags: 'a' });
+const logStream = fs.createWriteStream('../log/access.log', { flags: 'a' });
 
 app.use(logger(':json', { stream: logStream }));
 app.use(express.json());
