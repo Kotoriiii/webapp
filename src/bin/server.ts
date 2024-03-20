@@ -86,7 +86,8 @@ function onListening() {
   logStream.write(
     JSON.stringify({
       message: `app appListening on ${bind}`,
-      timestamp: moment().format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      timestamp: Date.now(),
+      date: moment().format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       severity: 'INFO'
     }) + '\n'
   );
