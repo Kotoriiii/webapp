@@ -10,10 +10,37 @@ import usersRouter from './routes/userRouter';
 
 const app = express();
 
+function formatUTCWithMs(date: Date) {
+  function parse(number: number) {
+      if (number < 10) {
+          return '0' + number;
+      }
+      return number;
+  }
+
+  function parseMs(number: number) {
+      if (number < 10) {
+          return '00' + number;
+      } else if (number < 100) {
+          return '0' + number;
+      }
+      return number;
+  }
+
+  return date.getUTCFullYear() +
+      '-' + parse(date.getUTCMonth() + 1) +
+      '-' + parse(date.getUTCDate()) +
+      'T' + parse(date.getUTCHours()) +
+      ':' + parse(date.getUTCMinutes()) +
+      ':' + parse(date.getUTCSeconds()) +
+      '.' + parseMs(date.getUTCMilliseconds()) +
+      'Z';
+}
+
 const jsonFormat: FormatFn = (tokens, req, res) => {
   return JSON.stringify({
     'remote-address': tokens['remote-addr'](req, res),
-    date: tokens['date'](req, res, 'iso'),
+    date: formatUTCWithMs(new Date()),
     method: tokens['method'](req, res),
     url: tokens['url'](req, res),
     'http-version': tokens['http-version'](req, res),
@@ -21,7 +48,8 @@ const jsonFormat: FormatFn = (tokens, req, res) => {
     'content-length': tokens['res'](req, res, 'content-length'),
     referrer: tokens['referrer'](req, res),
     'user-agent': tokens['user-agent'](req, res),
-    'response-time': `${tokens['response-time'](req, res)} ms`
+    'response-time': `${tokens['response-time'](req, res)} ms`,
+    'severity': Number(tokens['status'](req, res)) >= 400 ? 'ERROR': 'INFO'
   });
 };
 
