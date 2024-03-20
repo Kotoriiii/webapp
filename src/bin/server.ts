@@ -7,7 +7,7 @@
 import app from '../app';
 import http from 'http';
 import { logStream } from '../app';
-import formatUTCWithMs from 'src/utils/formateTime';
+import moment from 'moment';
 
 /**
  * Get port from environment and store in Express.
@@ -86,7 +86,7 @@ function onListening() {
   logStream.write(
     JSON.stringify({
       message: `app appListening on ${bind}`,
-      timestamp: Date.now(),
+      timestamp: moment().format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       severity: 'INFO'
     }) + '\n'
   );
