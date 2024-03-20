@@ -4,7 +4,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger, { FormatFn } from 'morgan';
 import fs from 'fs';
-import formatUTCWithMs from './utils/formateTime';
+import moment from 'moment';
 
 import headlthzRouter from './routes/healthzRouter';
 import usersRouter from './routes/userRouter';
@@ -15,7 +15,7 @@ const jsonFormat: FormatFn = (tokens, req, res) => {
   return JSON.stringify({
     message: `${tokens['method'](req, res)} ${tokens['url'](req, res)} api`,
     'remote-address': tokens['remote-addr'](req, res),
-    timestamp: formatUTCWithMs(new Date()),
+    timestamp: moment().format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
     method: tokens['method'](req, res),
     url: tokens['url'](req, res),
     'http-version': tokens['http-version'](req, res),
