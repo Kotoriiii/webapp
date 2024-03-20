@@ -2,36 +2,34 @@ import createError from 'http-errors';
 import express, { ErrorRequestHandler } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan';
+import logger, { FormatFn } from 'morgan';
 import fs from 'fs';
 
 import headlthzRouter from './routes/healthzRouter';
 import usersRouter from './routes/userRouter';
-import { IncomingMessage } from 'http';
 
 const app = express();
 
-interface IReq extends IncomingMessage {
-  originalUrl: string;
-}
+const jsonFormat: FormatFn = (tokens, req, res) => {
+  return JSON.stringify({
+    'remote-address': tokens['remote-addr'](req, res),
+    date: tokens['date'](req, res, 'iso'),
+    method: tokens['method'](req, res),
+    url: tokens['url'](req, res),
+    'http-version': tokens['http-version'](req, res),
+    'status-code': tokens['status'](req, res),
+    'content-length': tokens['res'](req, res, 'content-length'),
+    referrer: tokens['referrer'](req, res),
+    'user-agent': tokens['user-agent'](req, res),
+    'response-time': `${tokens['response-time'](req, res)} ms`
+  });
+};
 
-logger.token('json', (req: IReq, res) =>
-  JSON.stringify({
-    remoteAddr: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
-    date: new Date().getTime(),
-    method: req.method,
-    url: req.originalUrl,
-    httpVersion: `HTTP/${req.httpVersion}`,
-    status: res.statusCode,
-    contentLength: res.getHeader('content-length') || '0',
-    referrer: req.headers['referrer'] || '',
-    userAgent: req.headers['user-agent'] || ''
-  })
-);
+const logStream = fs.createWriteStream(path.resolve(__dirname, '../logs/access.log'), {
+  flags: 'a'
+});
 
-const logStream = fs.createWriteStream(path.resolve(__dirname, '../logs/access.log'), { flags: 'a' });
-
-app.use(logger(':json', { stream: logStream }));
+app.use(logger(jsonFormat, { stream: logStream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

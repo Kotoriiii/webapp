@@ -49,8 +49,8 @@ build {
 
   // Transfer Ops Agent config file to custom image
   provisioner "file" {
-    source      = "./packer/config.yml"
-    destination = "/tmp/config.yml"
+    source      = "./packer/config.yaml"
+    destination = "/tmp/config.yaml"
   }
 
   //  Change app is owned by user csye6225 and add systemd service
@@ -62,7 +62,7 @@ build {
       "sudo pnpm run -C /opt/app build",
       "sudo chown -R csye6225:csye6225 /opt/app",
       "sudo mv /tmp/nodeapp.service /etc/systemd/system/",
-      "sudo mv /tmp/config.yml /etc/google-cloud-ops-agent/",
+      "sudo mv /tmp/config.yaml /etc/google-cloud-ops-agent/",
       "sudo systemctl daemon-reload",
       "sudo systemctl restart google-cloud-ops-agent"
     ]
