@@ -16,6 +16,15 @@ jobs:
       - name: CheckOut
         uses: actions/checkout@v4
 
+      - name: Make logs file
+        run: mkdir logs
+
+      - name: Install Zip
+        uses: montudor/action-zip@v1
+  
+      - name: Build Application Artifact
+        run: "zip -r temp.zip ./ -x './packer/*' -x './.github/*' -x './node_modules/*' './.git/*'"
+
       - name: Shutdown Ubuntu MySQL (SUDO)
         run: sudo service mysql stop
       
@@ -39,12 +48,6 @@ jobs:
         
       - name: Run testing
         run: npm run test
-
-      - name: Install Zip
-        uses: montudor/action-zip@v1
-  
-      - name: Build Application Artifact
-        run: "zip -r temp.zip ./ -x './packer/*' -x './.github/*' -x './node_modules/*' './.git/*'"
       
       - name: Set up Packer
         uses: hashicorp/setup-packer@main

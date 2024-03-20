@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: CheckOut
         uses: actions/checkout@v4
+
+      - name: Make logs file
+        run: mkdir logs
       
       - name: Shutdown Ubuntu MySQL (SUDO)
         run: sudo service mysql stop
