@@ -15,7 +15,7 @@ const jsonFormat: FormatFn = (tokens, req, res) => {
   return JSON.stringify({
     message: `${tokens['method'](req, res)} ${tokens['url'](req, res)} api`,
     'remote-address': tokens['remote-addr'](req, res),
-    timestamp: formatUTCWithMs(new Date()),
+    timestamp: Date.now(),
     method: tokens['method'](req, res),
     url: tokens['url'](req, res),
     'http-version': tokens['http-version'](req, res),
