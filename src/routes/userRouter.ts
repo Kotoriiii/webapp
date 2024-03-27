@@ -7,11 +7,26 @@ import {
   basicAuthMiddleware,
   getUserMiddleware
 } from 'src/middleware';
+import { verifyUserMiddleware } from 'src/middleware/userMiddleware';
+import { checkVerifyUserMiddleware } from '../middleware/userMiddleware';
 
 const router = express.Router();
 
 router.post('/', createUserMiddleware, userController.createUsers);
-router.put('/', basicAuthMiddleware, updateUserMiddleware, userController.updateUser);
-router.get('/self', basicAuthMiddleware, getUserMiddleware, userController.getUsers);
+router.put(
+  '/',
+  basicAuthMiddleware,
+  checkVerifyUserMiddleware,
+  updateUserMiddleware,
+  userController.updateUser
+);
+router.get(
+  '/self',
+  basicAuthMiddleware,
+  checkVerifyUserMiddleware,
+  getUserMiddleware,
+  userController.getUsers
+);
+router.get('/verify', verifyUserMiddleware, userController.verifyUsers);
 
 export default add405ResponseToRouter(router);
