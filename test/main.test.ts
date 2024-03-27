@@ -72,7 +72,9 @@ describe('api integration test', () => {
         first_name: 'test',
         last_name: 'test',
         password: 'test',
-        username: 'test@example.com'
+        username: 'test@example.com',
+        isSend: true,
+        isVerify: true
       });
       expect(res.statusCode).toBe(201);
       expect(res.body.data['password']).toBeUndefined();
@@ -148,7 +150,9 @@ describe('api integration test', () => {
       expect(rest).toEqual({
         first_name: 'test',
         last_name: 'test',
-        username: 'test@example.com'
+        username: 'test@example.com',
+        isSend: true,
+        isVerify: true
       });
     });
   });
@@ -199,7 +203,9 @@ describe('api integration test', () => {
       expect(rest).toEqual({
         first_name: 'Jason',
         last_name: 'Li',
-        username: 'test@example.com'
+        username: 'test@example.com',
+        isSend: true,
+        isVerify: true
       });
     });
 
