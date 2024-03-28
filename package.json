@@ -13,10 +13,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^4.3.3",
     "@prisma/client": "^5.8.1",
     "basic-auth": "^2.0.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
+    "crypto-js": "^4.2.0",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
@@ -31,6 +33,7 @@
     "@types/basic-auth": "^1.1.8",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.6",
+    "@types/crypto-js": "^4.2.2",
     "@types/debug": "^4.1.12",
     "@types/express": "^4.17.21",
     "@types/http-errors": "^2.0.4",

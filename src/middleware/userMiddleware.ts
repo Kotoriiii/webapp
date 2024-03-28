@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import userService from 'src/service/user/userService';
 import { sendResponse } from 'src/utils/sendResponse';
 import { User } from '@prisma/client';
+import { IRequest } from 'src/types';
 
-const user: User = {
+const user = {
   id: '',
   first_name: '',
   last_name: '',
@@ -84,6 +85,62 @@ export const getUserMiddleware = (req: Request, res: Response, next: NextFunctio
   if (Object.keys(req.body).length !== 0) {
     res.statusCode = 400;
     sendResponse(res, null, 'cannot have body');
+    return;
+  }
+
+  next();
+};
+
+export const verifyUserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.query.id || !req.query.code) {
+    res.statusCode = 400;
+    sendResponse(res, null, 'params is not correct');
+    return;
+  }
+
+  try {
+    const result = await userService.getUserByIdCode(req.query.id as string, req.query.code as string);
+    if (!result) {
+      res.statusCode = 400;
+      sendResponse(res, null, 'user is not found');
+      return;
+    }
+    if (!result?.isSend) {
+      res.statusCode = 400;
+      sendResponse(res, null, 'email is not send');
+      return;
+    }
+    const diff = new Date().getTime() - result.account_created!.getTime();
+    if (diff / 1000 > 60) {
+      res.statusCode = 400;
+      sendResponse(res, null, 'verify email is expired');
+      return;
+    }
+  } catch (err) {
+    res.statusCode = 503;
+    sendResponse(res, err);
+    return;
+  }
+
+  next();
+};
+
+export const checkVerifyUserMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userInfo } = req as IRequest;
+  try {
+    const result = await userService.getUserById(userInfo.id);
+    if (!result?.isVerify) {
+      res.statusCode = 403;
+      sendResponse(res, null, 'user is not verified');
+      return;
+    }
+  } catch (err) {
+    res.statusCode = 503;
+    sendResponse(res, err);
     return;
   }
 
