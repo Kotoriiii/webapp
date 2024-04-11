@@ -13,63 +13,63 @@ jobs:
       DATABASE_URL: ${{secrets.DATABASE_URL}}
 
     steps:
-      # - name: CheckOut
-      #   uses: actions/checkout@v4
+      - name: CheckOut
+        uses: actions/checkout@v4
 
-      # - name: Make logs file
-      #   run: mkdir logs
+      - name: Make logs file
+        run: mkdir logs
 
-      # - name: Install Zip
-      #   uses: montudor/action-zip@v1
+      - name: Install Zip
+        uses: montudor/action-zip@v1
 
-      # - name: Build Application Artifact
-      #   run: "zip -r temp.zip ./ -x './packer/*' -x './.github/*' -x './node_modules/*' './.git/*'"
+      - name: Build Application Artifact
+        run: "zip -r temp.zip ./ -x './packer/*' -x './.github/*' -x './node_modules/*' './.git/*'"
 
-      # - name: Shutdown Ubuntu MySQL (SUDO)
-      #   run: sudo service mysql stop
+      - name: Shutdown Ubuntu MySQL (SUDO)
+        run: sudo service mysql stop
 
-      # - name: Set up MySQL
-      #   uses: mirromutth/mysql-action@v1.1
-      #   with:
-      #     mysql database: ${{secrets.TEST_DATABASE}}
-      #     mysql root password: ${{secrets.TEST_DATABASE_PASSWORD}}
+      - name: Set up MySQL
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          mysql database: ${{secrets.TEST_DATABASE}}
+          mysql root password: ${{secrets.TEST_DATABASE_PASSWORD}}
 
-      # - name: Use NodeJS
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '20.x'
-      #     cache: 'npm'
+      - name: Use NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          cache: 'npm'
 
-      # - name: Install dependencies
-      #   run: npm install
+      - name: Install dependencies
+        run: npm install
 
-      # - name: Migrate Database
-      #   run: npm run prisma-migrate
+      - name: Migrate Database
+        run: npm run prisma-migrate
 
-      # - name: Run testing
-      #   run: npm run test
+      - name: Run testing
+        run: npm run test
 
-      # - name: Set up Packer
-      #   uses: hashicorp/setup-packer@main
-      #   with:
-      #     version: 'latest'
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: 'latest'
 
-      # - name: 'Run Packer init'
-      #   run: 'packer init packer/version.pkr.hcl'
+      - name: 'Run Packer init'
+        run: 'packer init packer/version.pkr.hcl'
 
-      # - name: 'Run Packer fmt'
-      #   run: |
-      #     if ! packer fmt --check packer/.; then
-      #     echo "Packer fmt found formatting issues. Please run 'packer fmt' locally and commit the changes."
-      #     exit 1
-      #     fi
+      - name: 'Run Packer fmt'
+        run: |
+          if ! packer fmt --check packer/.; then
+          echo "Packer fmt found formatting issues. Please run 'packer fmt' locally and commit the changes."
+          exit 1
+          fi
 
-      # - name: 'Run Packer validate'
-      #   run: |
-      #     if ! packer validate packer/.; then
-      #     echo "Packer validation failed. Please fix the issues and try again."
-      #     exit 1
-      #     fi
+      - name: 'Run Packer validate'
+        run: |
+          if ! packer validate packer/.; then
+          echo "Packer validation failed. Please fix the issues and try again."
+          exit 1
+          fi
 
       - name: 'Google Auth'
         uses: 'google-github-actions/auth@v2'
@@ -82,21 +82,21 @@ jobs:
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
 
-      # - name: Set up Packer
-      #   uses: hashicorp/setup-packer@main
-      #   with:
-      #     version: 'latest'
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: 'latest'
 
-      # - name: 'Build Custom Image'
-      #   run: |
-      #     packer init packer/version.pkr.hcl
-      #     packer build packer/gcloud.pkr.hcl
+      - name: 'Build Custom Image'
+        run: |
+          packer init packer/version.pkr.hcl
+          packer build packer/gcloud.pkr.hcl
 
       - name: 'Create a new Instance Template'
         run: |
           gcloud compute instance-templates create "webapp-template-${GITHUB_RUN_ID}" \
             --region="us-east1" \
-            --machine-type="e2-standard-2" \
+            --machine-type="n2-standard-2" \
             --boot-disk-type="pd-balanced" \
             --boot-disk-size="100GB" \
             --boot-disk-kms-key=${{secrets.KMS_KEY}} \
@@ -108,10 +108,9 @@ jobs:
             --tags="webapp" \
             --service-account=${{secrets.SERVICE_ACCOUNT}} \
             --scopes="cloud-platform" \
-            --metadata=startup-script='
-              sudo bash -c "echo 'DATABASE_URL=mysql://${{secrets.GCP_SQL_USER}}:${{secrets.GCP_SQL_PASSWORD}}@${{secrets.GCP_DATABASE_HOST}}/${{secrets.GCP_SQL_DATABASE}}' > /opt/app/.env"
+            --metadata=startup-script='sudo bash -c "echo 'DATABASE_URL=mysql://${{secrets.GCP_SQL_USER}}:${{secrets.GCP_SQL_PASSWORD}}@${{secrets.GCP_DATABASE_HOST}}/${{secrets.GCP_SQL_DATABASE}}' > /opt/app/.env"
               sudo pnpm run -C /opt/app prisma-migrate
-              sudo systemctl start nodeapp.service'   
+              sudo systemctl start nodeapp.service'
 
       - name: Update Managed Instance Group with New Template
         run: |
@@ -134,7 +133,9 @@ jobs:
               echo "Update completed successfully."
               exit 0
             elif [ "$status" = "False" ]; then
-              echo "Update failed."
+              echo "Update in progress..."
+            else 
+              echo "Update failed"
               exit 1
             fi
             sleep 30
